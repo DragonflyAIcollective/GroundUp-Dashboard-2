@@ -39,9 +39,16 @@ sudo dpkg -i supabase_2.54.11_linux_amd64.deb
 ```
 
 **On Windows:**
+
+See **[WINDOWS_INSTALLATION.md](./WINDOWS_INSTALLATION.md)** for detailed Windows installation methods.
+
+**Quick method (no installation):**
 ```powershell
-scoop install supabase
+# Use npx to run Supabase CLI without installing
+npx supabase@latest --version
 ```
+
+Then use `npx supabase@latest` instead of `supabase` in all commands below.
 
 **Verify installation:**
 ```bash
