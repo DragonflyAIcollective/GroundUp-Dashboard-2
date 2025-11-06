@@ -119,6 +119,7 @@ Follow the **[QUICK_START_DEPLOYMENT.md](./QUICK_START_DEPLOYMENT.md)** guide fo
 
 Use these automated scripts to deploy your infrastructure:
 
+**On macOS/Linux:**
 ```bash
 # Deploy database migrations
 ./deploy-migrations.sh
@@ -129,6 +130,20 @@ Use these automated scripts to deploy your infrastructure:
 # Configure Supabase secrets
 ./setup-secrets.sh
 ```
+
+**On Windows (PowerShell):**
+```powershell
+# Deploy database migrations
+.\deploy-migrations.ps1
+
+# Deploy all edge functions
+.\deploy-functions.ps1
+
+# Configure Supabase secrets
+.\setup-secrets.ps1
+```
+
+**Windows Installation Help:** See [WINDOWS_INSTALLATION.md](./WINDOWS_INSTALLATION.md)
 
 ### Manual Deployment Steps
 

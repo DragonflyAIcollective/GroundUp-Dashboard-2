@@ -29,13 +29,21 @@ sudo dpkg -i supabase_2.54.11_linux_amd64.deb
 ```
 
 **Windows:**
+
+If you don't have Scoop installed, see **[WINDOWS_INSTALLATION.md](./WINDOWS_INSTALLATION.md)** for multiple installation options.
+
+**Quick option - Use npx (no installation needed):**
 ```powershell
-scoop install supabase
+npx supabase@latest --version
 ```
+
+Then use `npx supabase@latest` instead of `supabase` for all commands.
 
 **Verify:**
 ```bash
 supabase --version
+# OR with npx:
+npx supabase@latest --version
 ```
 
 ---
