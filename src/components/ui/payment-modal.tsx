@@ -70,6 +70,7 @@ function PaymentForm({
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPaymentElementReady, setIsPaymentElementReady] = useState(false);
 
   useEffect(() => {
     if (stripe && elements) {
@@ -82,6 +83,13 @@ function PaymentForm({
 
     if (!stripe || !elements) {
       setMessage('Stripe has not loaded yet. Please try again.');
+      return;
+    }
+
+    // Verify that the PaymentElement is actually mounted
+    const paymentElement = elements.getElement('payment');
+    if (!paymentElement) {
+      setMessage('Payment form is not ready. Please wait a moment and try again.');
       return;
     }
 
@@ -135,6 +143,11 @@ function PaymentForm({
               },
             },
           }}
+          onReady={() => setIsPaymentElementReady(true)}
+          onLoadError={(error) => {
+            console.error('PaymentElement load error:', error);
+            setMessage('Failed to load payment form. Please refresh and try again.');
+          }}
         />
       </div>
 
@@ -154,9 +167,9 @@ function PaymentForm({
         <Button
           type="submit"
           className="w-full"
-          disabled={!stripe || isProcessing}
+          disabled={!stripe || !isPaymentElementReady || isProcessing}
         >
-          {isProcessing ? 'Processing...' : `Pay for ${jobClassification} Job`}
+          {isProcessing ? 'Processing...' : !isPaymentElementReady ? 'Loading payment form...' : `Pay for ${jobClassification} Job`}
         </Button>
       </div>
     </form>
