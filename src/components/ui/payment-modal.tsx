@@ -202,6 +202,17 @@ export function PaymentModal({
           
           if (profileData?.full_name) {
             setUserName(profileData.full_name);
+          } else {
+            // If no full name in profile, try to get company name from clients table
+            const { data: clientData } = await supabase
+              .from('clients')
+              .select('company_name')
+              .eq('user_id', user.id)
+              .single();
+            
+            if (clientData?.company_name) {
+              setUserName(clientData.company_name);
+            }
           }
         }
       } catch (error) {
