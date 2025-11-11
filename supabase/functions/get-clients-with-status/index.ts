@@ -119,12 +119,23 @@ serve(async req => {
       .filter(client => client.profiles && client.profiles.role === 'client');
 
     // Get all auth users to check confirmation status
-    const {
-      data: { users },
-      error: usersError,
-    } = await supabaseAdmin.auth.admin.listUsers();
+    let users = [];
+    try {
+      const {
+        data: { users: authUsers },
+        error: usersError,
+      } = await supabaseAdmin.auth.admin.listUsers();
 
-    if (usersError) throw usersError;
+      if (usersError) {
+        console.error('Error fetching auth users:', usersError);
+        throw usersError;
+      }
+      users = authUsers || [];
+    } catch (authError) {
+      console.error('Failed to fetch auth users:', authError);
+      // Continue without user confirmation status if auth fails
+      users = [];
+    }
 
     // Map clients with their confirmation status
     const clientsWithStatus = clients?.map(client => {
@@ -150,9 +161,12 @@ serve(async req => {
     );
   } catch (error) {
     console.error('Error fetching clients:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
     return new Response(
       JSON.stringify({
         error: error.message || 'An unexpected error occurred',
+        details: error.toString(),
+        stack: error.stack,
       }),
       {
         status: 500,
