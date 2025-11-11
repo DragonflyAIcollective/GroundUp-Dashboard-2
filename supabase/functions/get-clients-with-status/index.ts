@@ -109,10 +109,12 @@ serve(async req => {
     );
 
     // Merge clients with their profiles
-    const clients = allClients?.map(client => ({
-      ...client,
-      profiles: profilesMap.get(client.user_id) || null,
-    })).filter(client => client.profiles && client.profiles.role === 'client');
+    const clients = (allClients || [])
+      .map(client => ({
+        ...client,
+        profiles: profilesMap.get(client.user_id) || null,
+      }))
+      .filter(client => client.profiles && client.profiles.role === 'client');
 
     // Get all auth users to check confirmation status
     const {
