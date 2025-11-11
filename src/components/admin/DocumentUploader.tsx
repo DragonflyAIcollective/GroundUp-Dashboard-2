@@ -450,8 +450,7 @@ export function DocumentUploader() {
     if (
       !user ||
       !selectedFile ||
-      !formData.selectedClient ||
-      !formData.selectedJobPost
+      !formData.selectedClient
     )
       return;
 
@@ -791,7 +790,7 @@ export function DocumentUploader() {
           {formData.selectedClient && (
             <div className="space-y-2">
               <Label htmlFor="job-post-selection" className="text-foreground">
-                Select Job Position *
+                Select Job Position (Optional)
               </Label>
               <Select
                 value={formData.selectedJobPost}
@@ -825,9 +824,8 @@ export function DocumentUploader() {
                 </SelectContent>
               </Select>
               {jobPosts.length === 0 && !loadingJobPosts && (
-                <p className="text-sm text-yellow-600">
-                  ⚠️ This client has no active posted jobs. Only paid and
-                  published jobs are available for candidate assignment.
+                <p className="text-sm text-blue-600">
+                  ℹ️ This client has no active posted jobs. You can still upload the resume without selecting a specific job position.
                 </p>
               )}
               {formData.selectedJobPost && (
