@@ -73,17 +73,25 @@ serve(async req => {
     }
 
     // Fetch all clients
+    console.log('Fetching clients...');
     const { data: allClients, error: clientsError } = await supabaseAdmin
       .from('clients')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (clientsError) throw clientsError;
+    if (clientsError) {
+      console.error('Error fetching clients:', clientsError);
+      throw new Error(`Failed to fetch clients: ${clientsError.message}`);
+    }
+
+    console.log(`Found ${allClients?.length || 0} clients`);
 
     // Fetch all profiles for these clients - filter out null/undefined user_ids
     const userIds = (allClients || [])
       .map(client => client.user_id)
       .filter(id => id != null);
+
+    console.log(`Found ${userIds.length} unique user IDs`);
 
     if (userIds.length === 0) {
       return new Response(
@@ -98,12 +106,18 @@ serve(async req => {
       );
     }
 
+    console.log('Fetching profiles...');
     const { data: profiles, error: profilesError } = await supabaseAdmin
       .from('profiles')
       .select('user_id, email, full_name, role, is_active')
       .in('user_id', userIds);
 
-    if (profilesError) throw profilesError;
+    if (profilesError) {
+      console.error('Error fetching profiles:', profilesError);
+      throw new Error(`Failed to fetch profiles: ${profilesError.message}`);
+    }
+
+    console.log(`Found ${profiles?.length || 0} profiles`);
 
     // Create a map of profiles by user_id for easy lookup
     const profilesMap = new Map(
