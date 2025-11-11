@@ -72,18 +72,30 @@ serve(async req => {
       );
     }
 
-    // Fetch all clients - explicitly list columns to avoid PostgREST relationship detection
+    // Fetch all clients using direct REST API to bypass PostgREST relationship validation
     console.log('Fetching clients...');
-    const { data: allClients, error: clientsError } = await supabaseAdmin
-      .from('clients')
-      .select('id, user_id, company_name, contact_phone, address, street1, street2, city, state, zip, welcome_email_sent, created_at, updated_at')
-      .order('created_at', { ascending: false });
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
-    if (clientsError) {
-      console.error('Error fetching clients:', clientsError);
-      throw new Error(`Failed to fetch clients: ${clientsError.message}`);
+    const clientsResponse = await fetch(
+      `${supabaseUrl}/rest/v1/clients?select=id,user_id,company_name,contact_phone,address,street1,street2,city,state,zip,welcome_email_sent,created_at,updated_at&order=created_at.desc`,
+      {
+        headers: {
+          'apikey': serviceRoleKey,
+          'Authorization': `Bearer ${serviceRoleKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        }
+      }
+    );
+
+    if (!clientsResponse.ok) {
+      const errorText = await clientsResponse.text();
+      console.error('Error fetching clients:', errorText);
+      throw new Error(`Failed to fetch clients: ${errorText}`);
     }
 
+    const allClients = await clientsResponse.json();
     console.log(`Found ${allClients?.length || 0} clients`);
 
     // Fetch all profiles for these clients - filter out null/undefined user_ids
@@ -107,16 +119,25 @@ serve(async req => {
     }
 
     console.log('Fetching profiles...');
-    const { data: profiles, error: profilesError } = await supabaseAdmin
-      .from('profiles')
-      .select('user_id, email, full_name, role, is_active')
-      .in('user_id', userIds);
+    const profilesResponse = await fetch(
+      `${supabaseUrl}/rest/v1/profiles?select=user_id,email,full_name,role,is_active&user_id=in.(${userIds.join(',')})`,
+      {
+        headers: {
+          'apikey': serviceRoleKey,
+          'Authorization': `Bearer ${serviceRoleKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        }
+      }
+    );
 
-    if (profilesError) {
-      console.error('Error fetching profiles:', profilesError);
-      throw new Error(`Failed to fetch profiles: ${profilesError.message}`);
+    if (!profilesResponse.ok) {
+      const errorText = await profilesResponse.text();
+      console.error('Error fetching profiles:', errorText);
+      throw new Error(`Failed to fetch profiles: ${errorText}`);
     }
 
+    const profiles = await profilesResponse.json();
     console.log(`Found ${profiles?.length || 0} profiles`);
 
     // Create a map of profiles by user_id for easy lookup
