@@ -72,11 +72,11 @@ serve(async req => {
       );
     }
 
-    // Fetch all clients
+    // Fetch all clients - explicitly list columns to avoid PostgREST relationship detection
     console.log('Fetching clients...');
     const { data: allClients, error: clientsError } = await supabaseAdmin
       .from('clients')
-      .select('*')
+      .select('id, user_id, company_name, contact_phone, address, street1, street2, city, state, zip, welcome_email_sent, created_at, updated_at')
       .order('created_at', { ascending: false });
 
     if (clientsError) {
