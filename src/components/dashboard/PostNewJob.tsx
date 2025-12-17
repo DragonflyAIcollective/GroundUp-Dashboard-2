@@ -164,7 +164,7 @@ export function PostNewJob() {
     };
 
     loadCompanyData();
-  }, [toast]);
+  }, []);
 
   const handleSaveCompanyTemplate = () => {
     if (!validateCompanyForm()) {

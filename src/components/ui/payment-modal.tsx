@@ -321,7 +321,7 @@ export function PaymentModal({
     } finally {
       setIsLoading(false);
     }
-  }, [jobData, companyData, existingJobId, toast]);
+  }, [jobData, companyData, existingJobId]);
 
   // Create payment intent when modal opens
   useEffect(() => {
