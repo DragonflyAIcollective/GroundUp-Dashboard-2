@@ -150,9 +150,9 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Get the app URL - fallback to production URL if not set
+    // Get the app URL - fallback to app URL if not set
     const appUrl =
-      Deno.env.get('VITE_APP_URL') || 'https://groundupcareers.com';
+      Deno.env.get('VITE_APP_URL') || 'https://groundupcareers.app';
     console.log('[NotifyNewClient] Using app URL:', appUrl);
 
     // Prepare email data

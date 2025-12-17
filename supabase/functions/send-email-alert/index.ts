@@ -204,7 +204,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const appUrl =
-      Deno.env.get('VITE_APP_URL') || 'https://groundupcareers.com';
+      Deno.env.get('VITE_APP_URL') || 'https://groundupcareers.app';
 
     // Generate email content based on alert type
     let emailContent;

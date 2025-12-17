@@ -303,7 +303,7 @@ serve(async req => {
                     companyName: jobPostData.company_name || 'Company',
                     dashboardUrl: `${
                       Deno.env.get('VITE_APP_URL') ||
-                      'https://groundupcareers.com'
+                      'https://groundupcareers.app'
                     }/dashboard/manage-jobs`,
                     clientEmail: jobPostData.clients.profiles.email,
                     clientId: jobPostData.clients.id,
