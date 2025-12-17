@@ -79,6 +79,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(!secureAuthStorage.hasValidAuthData());
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+
     // Set up auth state listener FIRST
     const {
       data: { subscription },
@@ -88,7 +90,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (session?.user) {
         // Fetch user profile after setting session
-        setTimeout(() => {
+        timeoutId = setTimeout(() => {
           fetchUserProfile(session.user.id);
         }, 0);
       } else {
@@ -109,7 +111,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   const fetchUserProfile = async (userId: string) => {
